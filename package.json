@@ -6,7 +6,6 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "bluebird": "^3.5.5",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "redis": "^2.8.0",

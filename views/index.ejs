@@ -1,39 +1,68 @@
 <!doctype html>
 <html>
 <head>
-    <title>Socket.IO chat</title>
+    <title><%= title %></title>
     <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+    <style>
+        #app{
+            margin: 30px auto;
+            width: 90%
+        }
+        .content pre{
+            padding: 0;
+            background-color: white
+        }
+    </style>
 </head>
 <body>
 <div id="app">
+
     <article class="media">
         <figure class="media-left">
             <p class="image is-64x64">
-                <img src="https://bulma.io/images/placeholders/128x128.png">
+                <img src="https://picsum.photos/128">
             </p>
         </figure>
         <div class="media-content">
             <div class="field">
                 <p class="control">
-                    <textarea class="textarea" placeholder="Add a comment..." @keyup.enter="onSubmit($event.target.value)"></textarea>
+                    <textarea class="textarea" placeholder="Add a comment..." v-model="twitMessage" @keyup.enter="onKeyupEnter"></textarea>
                 </p>
             </div>
             <nav class="level">
                 <div class="level-left">
                     <div class="level-item">
-                        <a class="button is-info">Submit</a>
+                        <a class="button is-info" @click="onSubmit">Submit</a>
                     </div>
                 </div>
                 <div class="level-right">
                     <div class="level-item">
                         <label class="checkbox">
-                            <input type="checkbox"> Press enter to submit
+                            <input type="checkbox" v-model="enterAllow"> Press enter to submit
                         </label>
                     </div>
                 </div>
             </nav>
         </div>
     </article>
+
+    <article class="media" v-for="(item, index) in twits">
+        <figure class="media-left">
+            <p class="image is-64x64">
+                <img :src="`https://picsum.photos/id/${index + Math.floor(Math.random() * 100)}/128`">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="content">
+                <p>
+                    <strong>{{item.id}}</strong>
+                    <pre>{{item.twit}}</pre>
+                    <small>{{item.fromNow}} | <a @click="deleteItem(item)">삭제</a></small>
+                </p>
+            </div>
+        </div>
+    </article>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -57,12 +86,19 @@
         console.log(data)
     })
 </script>
-<script src="https://unpkg.com/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
 <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
 
 <script>
     new Vue({
         el: '#app',
+        data:{
+            twits: [],
+            twitMessage: '',
+            enterAllow: false,
+        },
         created: function(){
             console.log('create!!')
             socket.on('user connect', data => {
@@ -70,15 +106,46 @@
             })
 
             socket.on('twitUpdate', data => {
-                log(data)
+                let twitList = data[0].map(item => item = JSON.parse(item))
+
+                this.twits = _.orderBy(twitList, ['date'], ['desc'])
+                this.twits.forEach(item => {
+                    item['fromNow'] = moment(item.date).fromNow()
+                })
+                log(twitList)
             })
+
+            this.getTwits()
         },
 
         methods: {
-            onSubmit(twit){
-                log(twit)
-                socket.emit('onTwitSubmit', {twit: twit})
-            }
+            onSubmit(){
+                log(this.twitMessage)
+                if(this.twitMessage.trim() === ''){
+                    log('none!')
+                    this.twitMessage = ''
+                    return
+                }
+                socket.emit('addTwit', {twit: this.twitMessage})
+                this.twitMessage = ''
+                this.$buefy.toast.open({
+                    message: 'Twitted!',
+                    type: 'is-success'
+                })
+            },
+
+            onKeyupEnter(){
+                if(!this.enterAllow) return
+                this.onSubmit()
+            },
+
+            getTwits(){
+                socket.emit('getTwits')
+            },
+
+            deleteItem(item){
+                socket.emit('deleteItem', JSON.stringify({id: item.id, twit: item.twit, date: item.date}))
+            },
         }
     })
 </script>
