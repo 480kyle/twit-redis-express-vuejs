@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+</head>
+<body>
+<div id="app">
+    <article class="media">
+        <figure class="media-left">
+            <p class="image is-64x64">
+                <img src="https://bulma.io/images/placeholders/128x128.png">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="field">
+                <p class="control">
+                    <textarea class="textarea" placeholder="Add a comment..." @keyup.enter="onSubmit($event.target.value)"></textarea>
+                </p>
+            </div>
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a class="button is-info">Submit</a>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <label class="checkbox">
+                            <input type="checkbox"> Press enter to submit
+                        </label>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </article>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const {log} = console
+    let transports = ['websocket']
+    let option = {
+        'force new connection': true,
+        'transports': transports,
+        'autoConnect': true,
+        'reconnection': true,
+        'timeout': 10000,
+        'flash policy port': 10843,
+        'reconnectionDelay': 1000
+    }
+    const socket = io('/', option)
+    socket.on('connect', data=>{
+        console.log(socket.id)
+    })
+    socket.on('connect ok', data=>{
+        console.log(data)
+    })
+</script>
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
+<script>
+    new Vue({
+        el: '#app',
+        created: function(){
+            console.log('create!!')
+            socket.on('user connect', data => {
+                log(data)
+            })
+
+            socket.on('twitUpdate', data => {
+                log(data)
+            })
+        },
+
+        methods: {
+            onSubmit(twit){
+                log(twit)
+                socket.emit('onTwitSubmit', {twit: twit})
+            }
+        }
+    })
+</script>
+</body>
+</html>
