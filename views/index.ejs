@@ -106,7 +106,7 @@
             })
 
             socket.on('twitUpdate', data => {
-                let twitList = data[0].map(item => item = JSON.parse(item))
+                let twitList = data.map(item => item = JSON.parse(item))
 
                 this.twits = _.orderBy(twitList, ['date'], ['desc'])
                 this.twits.forEach(item => {

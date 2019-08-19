@@ -89,9 +89,13 @@ const twitController = {
             //         })
             //     })
 
-            redisClient.multi().smembers("twits").exec(function (err, replies) {
-                    resolve(replies)
-                })
+            // redisClient.multi().smembers("twits").exec(function (err, replies) {
+            //         resolve(replies)
+            //     })
+
+            redisClient.smembers('twits', (err, replies) => {
+                resolve(replies)
+            })
         })
     },
 
