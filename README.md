@@ -1,4 +1,4 @@
-# happytalk-practice
+# twit-redis-express-vuejs
 
 ## Project setup
 ```
@@ -12,19 +12,5 @@ npm run serve
 
 ### Compiles and minifies for production
 ```
-npm run build
+node app.js
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-# twit-redis-express-vuejs
