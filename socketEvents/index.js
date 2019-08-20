@@ -7,6 +7,8 @@ const DEFUALT_ROOM_NAME = 'happytalk'
 const twitController = require('../controllers/TwitController')
 
 module.exports = function(io){
+    log('socket on')
+
     io.on('connection', socket => {
         log('a user connected: ', DEFUALT_ROOM_NAME)
 
@@ -25,13 +27,13 @@ module.exports = function(io){
             // redisClient.hset(id, 'twit', data.twit, 'date', new Date().getTime())
 
             twitController.getTwits().then(res => {
-                twitController.twitUpdate(socket, res)
+                twitController.twitUpdate(io, socket, res)
             })
         })
 
         socket.on('getTwits', data => {
             twitController.getTwits().then(res => {
-                twitController.twitUpdate(socket, res)
+                twitController.twitUpdate(io, socket, res)
             })
         })
 
