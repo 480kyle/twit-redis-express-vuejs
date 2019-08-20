@@ -25,6 +25,7 @@ module.exports = function(io){
 
             let twit = {
                 id: id,
+                userId: socket.id,
                 twit: data.twit,
                 date: new Date().getTime()
             }
@@ -39,16 +40,19 @@ module.exports = function(io){
 
         socket.on('getTwits', data => {
             twitController.getTwits().then(res => {
-                io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
+                socket.emit('twitUpdate', res)
             })
         })
 
-        socket.on('deleteItem', item => {
-            log(item)
-            twitController.deleteTwit(item).then(res => {
-                twitController.getTwits().then(res => {
-                    io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
-                })
+        socket.on('getTwit', data => {
+            twitController.getTwit(data).then(res => {
+                socket.emit('onGetTwit', res)
+            })
+        })
+
+        socket.on('deleteItem', id => {
+            twitController.deleteTwit(id).then(res => {
+                io.to(DEFUALT_ROOM_NAME).emit('onDeleteTwit', res)
             })
         })
     })

@@ -3,15 +3,15 @@
 ## Project setup
 ```
 npm install
+redis-server 설치 및 실행
 ```
 
-### Compiles and hot-reloads for development
+### Server start for development
 ```
-redis-server
 npm start
 ```
 
-### Compiles and minifies for production
+### Server start for production
 ```
 npm start
 ```
