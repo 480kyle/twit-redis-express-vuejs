@@ -23,25 +23,28 @@ module.exports = function(io){
 
             let id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 
-            // redisClient.sadd("twits", JSON.stringify({id: id, twit: data.twit, date: new Date().getTime()}))
-            // redisClient.hset(id, 'twit', data.twit, 'date', new Date().getTime())
+            let twit = JSON.stringify({id: id, twit: data.twit, date: new Date().getTime()})
 
-            twitController.getTwits().then(res => {
-                twitController.twitUpdate(io, socket, res)
+            twitController.addTwit(twit).then(res => {
+                twitController.getTwits().then(res => {
+                    io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
+                })
             })
+
         })
 
         socket.on('getTwits', data => {
             twitController.getTwits().then(res => {
-                twitController.twitUpdate(io, socket, res)
+                io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
             })
         })
 
         socket.on('deleteItem', item => {
             log(item)
-            // redisClient.srem('twits', item)
-            twitController.getTwits().then(res => {
-                twitController.twitUpdate(io, socket, res)
+            twitController.deleteTwit(item).then(res => {
+                twitController.getTwits().then(res => {
+                    io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
+                })
             })
         })
     })

@@ -33,7 +33,19 @@ module.exports = {
         })
     },
 
-    twitUpdate: function(io, socket, res){
-        io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
+    addTwit: function(twit){
+        return new Promise((resolve, reject) => {
+            // redisClient.hset(id, 'twit', data.twit, 'date', new Date().getTime())
+
+            redisClient.sadd("twits", twit)
+            resolve()
+        })
+    },
+
+    deleteTwit: function(item){
+        return new Promise((resolve, reject) => {
+            redisClient.srem('twits', item)
+            resolve()
+        })
     }
 }
