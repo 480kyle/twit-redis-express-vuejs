@@ -4,7 +4,7 @@ const router = express.Router()
 const {log} = console
 const DEFUALT_ROOM_NAME = 'happytalk'
 
-const twitController = require('../controllers/TwitController')
+const twitController = require('../controllers/TwitsController')
 
 module.exports = function(io){
     log('socket on')
@@ -23,7 +23,11 @@ module.exports = function(io){
 
             let id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 
-            let twit = JSON.stringify({id: id, twit: data.twit, date: new Date().getTime()})
+            let twit = {
+                id: id,
+                twit: data.twit,
+                date: new Date().getTime()
+            }
 
             twitController.addTwit(twit).then(res => {
                 twitController.getTwits().then(res => {
