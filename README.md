@@ -7,10 +7,11 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+redis-server
+npm start
 ```
 
 ### Compiles and minifies for production
 ```
-node app.js
+npm start
 ```
