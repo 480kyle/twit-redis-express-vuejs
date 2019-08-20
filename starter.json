@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "happytalk-practice",
+      "script": "./bin/www",
+      "watch": true,
+      "ignore_watch" : [".git","node_modules"],
+      "env": {
+        "HOST" : "localhost",
+        "NODE_ENV": "development",
+        "PORT" : 3000,
+      },
+      "instances": "max",
+      "exec_mode": "cluster"
+    }
+  ]
+}
