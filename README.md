@@ -8,10 +8,10 @@ redis-server 설치 및 실행
 
 ### Server start for development
 ```
-npm start
+pm2 start starter.json
 ```
 
 ### Server start for production
 ```
-npm start
+pm2 start starter.json
 ```

@@ -49,6 +49,12 @@ const socketEvents = function(io){
             }).catch(err => log(err))
         })
 
+        socket.on('updateTwit', data => {
+            twitController.updateTwit(data).then(res => {
+                socket.emit('onUpdateTwit', res)
+            }).catch(err => log(err))
+        })
+
         socket.on('deleteItem', id => {
             twitController.deleteTwit(id).then(res => {
                 io.to(DEFUALT_ROOM_NAME).emit('onDeleteTwit', res)

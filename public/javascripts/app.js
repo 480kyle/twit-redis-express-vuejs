@@ -37,6 +37,18 @@ new Vue({
             })
         })
 
+        socket.on('onUpdateTwit', data => {
+            log('onUpdateTwit: ', data)
+            this.twits.map(item => {
+                if(item.id === data.id) log(item)
+            })
+            // this.twits.push(data)
+            // this.twits = _.orderBy(this.twits, ['date'], ['desc'])
+            // this.twits.forEach(item => {
+            //     item['fromNow'] = moment(parseInt(item.date)).fromNow()
+            // })
+        })
+
         socket.on('onDeleteTwit', data => {
             log(data)
             this.twits.forEach((item, index) => {
@@ -75,6 +87,11 @@ new Vue({
 
         getTwit(id) {
             socket.emit('getTwit', id)
+        },
+
+        updateItem (item) {
+            socket.emit('updateTwit', item)
+            this.isCardModalActive = false
         },
 
         deleteItem(id) {

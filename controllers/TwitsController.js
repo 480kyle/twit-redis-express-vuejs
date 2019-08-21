@@ -10,10 +10,13 @@ const twitController = function () {
 
     function getTwits () {
         return new Promise((resolve, reject) => {
-            redisClient.keysAsync('twits:*').then(replies => {
-                resolve(replies)
-            }).catch(err => reject(err))
+            // redisClient.keysAsync('twits:*').then(replies => {
+            //     resolve(replies)
+            // }).catch(err => reject(err))
 
+            redisClient.scanAsync(0, 'match', 'twits:*', 'count', 100).then(replies => {
+                resolve(replies[1])
+            }).catch(err => reject(err))
         })
     }
 
@@ -29,7 +32,13 @@ const twitController = function () {
     function addTwit (data) {
         return new Promise((resolve, reject) => {
 
-            let isSuccess = redisClient.hsetAsync(`twits:${data.id}`, 'userId', data.userId, 'twit', data.twit, 'date', new Date().getTime()).then(res => resolve(isSuccess)).catch(err => reject(err))
+            redisClient.hsetAsync(`twits:${data.id}`, 'userId', data.userId, 'twit', data.twit, 'date', new Date().getTime()).then(res => resolve(res)).catch(err => reject(err))
+        })
+    }
+
+    function updateTwit (data) {
+        return new Promise((resolve, reject) => {
+            redisClient.hsetAsync(data.id, 'userId', data.userId, 'twit', data.twit, 'date', new Date().getTime()).then(res => resolve(data)).catch(err => reject(err))
         })
     }
 
@@ -45,6 +54,7 @@ const twitController = function () {
         getTwits: getTwits,
         getTwit: getTwit,
         addTwit: addTwit,
+        updateTwit: updateTwit,
         deleteTwit: deleteTwit
     }
 }()
