@@ -4,11 +4,16 @@
       "name": "happytalk-practice",
       "script": "./bin/www",
       "watch": true,
-      "ignore_watch" : [".git","node_modules"],
+      "ignore_watch": [
+        ".git",
+        "node_modules",
+        "study.md",
+        "direction.md"
+      ],
       "env": {
-        "HOST" : "localhost",
+        "HOST": "localhost",
         "NODE_ENV": "development",
-        "PORT" : 3000,
+        "PORT": 3000
       },
       "instances": "max",
       "exec_mode": "cluster"

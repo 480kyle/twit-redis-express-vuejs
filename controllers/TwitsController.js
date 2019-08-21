@@ -4,41 +4,49 @@ const redis = require('redis')
 bluebird.promisifyAll(redis)
 const redisClient = redis.createClient()
 
-const DEFUALT_ROOM_NAME = 'happytalk'
+const {log} = require('../consts/constants')
 
-const {log} = console
+const twitController = function () {
 
-module.exports = {
-    getTwits: function(){
+    function getTwits () {
         return new Promise((resolve, reject) => {
             redisClient.keysAsync('twits:*').then(replies => {
                 resolve(replies)
-            })
-        })
-    },
+            }).catch(err => reject(err))
 
-    getTwit: function(id){
+        })
+    }
+
+    function getTwit (id) {
         return new Promise((resolve, reject) => {
             redisClient.hgetallAsync(id).then((reply) => {
                 reply['id'] = id
                 resolve(reply)
-            })
-        })
-    },
-
-    addTwit: function(data){
-        return new Promise((resolve, reject) => {
-
-            let isSuccess = redisClient.hset(`twits:${data.id}`, 'twit', data.twit, 'date', new Date().getTime())
-            resolve(isSuccess)
-        })
-    },
-
-    deleteTwit: function(id){
-        return new Promise((resolve, reject) => {
-            redisClient.del(id, (err, reply) => {
-                resolve(id)
-            })
+            }).catch(err => reject(err))
         })
     }
-}
+
+    function addTwit (data) {
+        return new Promise((resolve, reject) => {
+
+            let isSuccess = redisClient.hsetAsync(`twits:${data.id}`, 'userId', data.userId, 'twit', data.twit, 'date', new Date().getTime()).then(res => resolve(isSuccess)).catch(err => reject(err))
+        })
+    }
+
+    function deleteTwit (id) {
+        return new Promise((resolve, reject) => {
+            redisClient.delAsync(id).then(res => {
+                resolve(id)
+            }).catch(err => reject(err))
+        })
+    }
+
+    return {
+        getTwits: getTwits,
+        getTwit: getTwit,
+        addTwit: addTwit,
+        deleteTwit: deleteTwit
+    }
+}()
+
+module.exports = twitController

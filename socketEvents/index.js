@@ -1,12 +1,11 @@
 const express = require('express')
 const router = express.Router()
 
-const {log} = console
-const DEFUALT_ROOM_NAME = 'happytalk'
+const {DEFUALT_ROOM_NAME, log} = require('../consts/constants')
 
 const twitController = require('../controllers/TwitsController')
 
-module.exports = function(io){
+const socketEvents = function(io){
     log('socket on')
 
     io.on('connection', socket => {
@@ -21,7 +20,7 @@ module.exports = function(io){
         socket.on('addTwit', data => {
             log(data.twit)
 
-            let id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
+            const id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 
             let twit = {
                 id: id,
@@ -33,7 +32,7 @@ module.exports = function(io){
             twitController.addTwit(twit).then(res => {
                 twitController.getTwits().then(res => {
                     io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
-                })
+                }).catch(err => log(err))
             })
 
         })
@@ -41,21 +40,23 @@ module.exports = function(io){
         socket.on('getTwits', data => {
             twitController.getTwits().then(res => {
                 socket.emit('twitUpdate', res)
-            })
+            }).catch(err => log(err))
         })
 
         socket.on('getTwit', data => {
             twitController.getTwit(data).then(res => {
                 socket.emit('onGetTwit', res)
-            })
+            }).catch(err => log(err))
         })
 
         socket.on('deleteItem', id => {
             twitController.deleteTwit(id).then(res => {
                 io.to(DEFUALT_ROOM_NAME).emit('onDeleteTwit', res)
-            })
+            }).catch(err => log(err))
         })
     })
 
     return router
 }
+
+module.exports = socketEvents

@@ -1,12 +1,13 @@
 new Vue({
     el: '#app',
-    data:{
+    data: {
         twits: [],
         twitMessage: '',
         enterAllow: true,
         isCardModalActive: false,
+        selectedItem: {userId: 1, twit: '', date: Date.now()},
     },
-    created: function(){
+    created: function () {
         console.log('create!!')
         socket.on('user connect', data => {
             log(data)
@@ -39,7 +40,7 @@ new Vue({
         socket.on('onDeleteTwit', data => {
             log(data)
             this.twits.forEach((item, index) => {
-                if(item.id === data) this.twits.splice(index, 1)
+                if (item.id === data) this.twits.splice(index, 1)
             })
         })
 
@@ -47,9 +48,9 @@ new Vue({
     },
 
     methods: {
-        onSubmit(){
+        onSubmit() {
             log(this.twitMessage)
-            if(this.twitMessage.trim() === ''){
+            if (this.twitMessage.trim() === '') {
                 log('none!')
                 this.twitMessage = ''
                 return
@@ -63,21 +64,27 @@ new Vue({
             })
         },
 
-        onKeyupEnter(){
-            if(!this.enterAllow) return
+        onKeyupEnter() {
+            if (!this.enterAllow) return
             this.onSubmit()
         },
 
-        getTwits(){
+        getTwits() {
             socket.emit('getTwits')
         },
 
-        getTwit(id){
+        getTwit(id) {
             socket.emit('getTwit', id)
         },
 
-        deleteItem(id){
+        deleteItem(id) {
             socket.emit('deleteItem', id)
+        },
+
+        onItemClick(item) {
+            this.isCardModalActive = true
+            this.selectedItem = item
+            log(this.selectedItem)
         },
     }
 })

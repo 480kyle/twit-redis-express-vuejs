@@ -10,9 +10,9 @@ let option = {
     'reconnectionDelay': 1000
 }
 const socket = io('/', option)
-socket.on('connect', data=>{
+socket.on('connect', data => {
     console.log(socket.id)
 })
-socket.on('connect ok', data=>{
+socket.on('connect ok', data => {
     console.log(data)
 })
