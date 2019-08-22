@@ -1,9 +1,11 @@
 const express = require('express')
 const router = express.Router()
 
-const {DEFUALT_ROOM_NAME, log} = require('../consts/constants')
+const {DEFUALT_ROOM_NAME, log} = require('../../consts/constants')
 
 const twitController = require('../controllers/TwitsController')
+
+const Twit = require('../models/Twit')
 
 const socketEvents = function(io){
     log('socket on')
@@ -18,34 +20,28 @@ const socketEvents = function(io){
         })
 
         socket.on('addTwit', data => {
-            log(data.twit)
+            log(data.message)
 
-            const id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
-
-            let twit = {
-                id: id,
-                userId: socket.id,
-                twit: data.twit,
-                date: new Date().getTime()
-            }
+            const twit = new Twit(socket.id, data.message)
 
             twitController.addTwit(twit).then(res => {
-                twitController.getTwits().then(res => {
-                    io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
-                }).catch(err => log(err))
-            })
+                io.to(DEFUALT_ROOM_NAME).emit('onAddTwit', res)
+                // twitController.getTwits().then(res => {
+                //     io.to(DEFUALT_ROOM_NAME).emit('twitUpdate', res)
+                // }).catch(err => log(err))
+            }).catch(err => log(err))
 
         })
 
         socket.on('getTwits', data => {
             twitController.getTwits().then(res => {
-                socket.emit('twitUpdate', res)
+                socket.emit('onGetTwits', res)
             }).catch(err => log(err))
         })
 
         socket.on('getTwit', data => {
             twitController.getTwit(data).then(res => {
-                socket.emit('onGetTwit', res)
+                socket.emit('onAddTwit', res)
             }).catch(err => log(err))
         })
 

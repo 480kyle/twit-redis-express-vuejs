@@ -40,8 +40,8 @@
         <div class="media-content">
             <div class="content">
                 <p>
-                    <strong @click="onItemClick(item)"><a>{{item.id}}</a></strong>
-                <pre>{{item.twit}}</pre>
+                    <strong @click="onItemClick(item)"><a>{{item.userId}}</a></strong>
+                <pre>{{item.message}}</pre>
                 <small>{{item.fromNow}} | <a @click="deleteItem(item.id)">삭제</a></small>
                 </p>
             </div>
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="content">
-                    <textarea class="textarea" placeholder="Add a comment..." v-model="selectedItem.twit"></textarea>
+                    <textarea class="textarea" placeholder="Add a comment..." v-model="selectedItem.message"></textarea>
                     <br>
                     <!--          <small>{{moment(parseInt(selectedItem.date)).format('YYYY-MM-dd')}}</small>-->
                     <a class="button is-info" @click="updateItem(selectedItem)">Submit</a>

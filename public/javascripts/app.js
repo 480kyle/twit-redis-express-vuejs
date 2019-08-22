@@ -13,40 +13,25 @@ new Vue({
             log(data)
         })
 
-        socket.on('twitUpdate', data => {
+        socket.on('onGetTwits', data => {
             log(data)
-            this.twits = []
-            data.forEach(id => {
-                this.getTwit(id)
-            })
-            // let twitList = data.map(item => item = JSON.parse(item))
-            //
-            // this.twits = _.orderBy(twitList, ['date'], ['desc'])
-            // this.twits.forEach(item => {
-            //     item['fromNow'] = moment(item.date).fromNow()
-            // })
-            // log(twitList)
-        })
-
-        socket.on('onGetTwit', data => {
-            log('onGetTwit: ', data)
-            this.twits.push(data)
-            this.twits = _.orderBy(this.twits, ['date'], ['desc'])
-            this.twits.forEach(item => {
+            data.forEach(item => {
                 item['fromNow'] = moment(parseInt(item.date)).fromNow()
             })
+            this.twits = data
+        })
+
+        socket.on('onAddTwit', data => {
+            data['fromNow'] = moment(parseInt(data.date)).fromNow()
+            log('onAddTwit: ', data)
+            this.twits.splice(0, 0, data)
         })
 
         socket.on('onUpdateTwit', data => {
             log('onUpdateTwit: ', data)
             this.twits.map(item => {
-                if(item.id === data.id) log(item)
+                if(item.id === data.id) return item.message = data.message
             })
-            // this.twits.push(data)
-            // this.twits = _.orderBy(this.twits, ['date'], ['desc'])
-            // this.twits.forEach(item => {
-            //     item['fromNow'] = moment(parseInt(item.date)).fromNow()
-            // })
         })
 
         socket.on('onDeleteTwit', data => {
@@ -67,9 +52,8 @@ new Vue({
                 this.twitMessage = ''
                 return
             }
-            socket.emit('addTwit', {twit: this.twitMessage})
+            socket.emit('addTwit', {message: this.twitMessage})
             this.twitMessage = ''
-            this.twits = []
             this.$buefy.toast.open({
                 message: 'Twitted!',
                 type: 'is-success'
@@ -100,7 +84,7 @@ new Vue({
 
         onItemClick(item) {
             this.isCardModalActive = true
-            this.selectedItem = item
+            this.selectedItem = _.clone(item)
             log(this.selectedItem)
         },
     }

@@ -10,7 +10,7 @@ const indexRouter = require('./routes/index');
 const app = express();
 
 const io = require('socket.io')();
-const socketEvents = require('./socketEvents')(io);
+const socketEvents = require('./api/socketEvents')(io);
 
 app.io = io;
 

@@ -13,7 +13,16 @@
       "env": {
         "HOST": "localhost",
         "NODE_ENV": "development",
-        "PORT": 3000
+        "PORT": 3000,
+
+        "MYSQL": {
+          "host": "127.0.0.1",
+          "user": "happytalk",
+          "password": "happy!@#123",
+          "port": "3306",
+          "database": "twit",
+          "connectionLimit": 25
+        }
       },
       "instances": "max",
       "exec_mode": "cluster"
