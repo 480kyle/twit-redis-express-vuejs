@@ -1,4 +1,3 @@
-const {log} = console
 let transports = ['websocket']
 let option = {
     'force new connection': true,
@@ -11,8 +10,8 @@ let option = {
 }
 const socket = io('/', option)
 socket.on('connect', data => {
-    console.log(socket.id)
+    log(socket.id)
 })
 socket.on('connect ok', data => {
-    console.log(data)
+    log(data)
 })
